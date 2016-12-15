@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="assets/css/index.css"/>
+</head>
+<body>
+
+<div id="demo">
+    <button @click="addUser">确认新增</button>
+    <button @click="changeBtn">确认修改</button>
+    <hr>
+    <label>姓名：</label><input type="text" v-model="name"><br/><br/>
+    <label>年龄：</label><input type="number" v-model="age"><br/><br/>
+    <label>电话：</label><input type="text" v-model="tel"><br/><br/>
+    <label>地址：</label><input type="text" v-model="address">
+    <hr>
+    <table>
+        <tr>
+            <td>编号</td>
+            <td>姓名</td>
+            <td>年龄</td>
+            <td>电话</td>
+            <td>地址</td>
+            <td>修改用户</td>
+            <td>删除用户</td>
+        </tr>
+        <template v-for="(index,item) in userList">
+            <tr>
+                <td>{{index+1}}</td>
+                <td>{{item.name}}</td>
+                <td>{{item.age}}</td>
+                <td>{{item.tel}}</td>
+                <td>{{item.address}}</td>
+                <td>
+                    <button @click="changeUser(item)">修改</button>
+                </td>
+                <td>
+                    <button @click="delUser(item)">删除</button>
+                </td>
+            </tr>
+        </template>
+    </table>
+
+
+</div>
+
+<script type="text/javascript" src="assets/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="assets/js/vue.js"></script>
+<script type="text/javascript" src="assets/js/vue-resource.min.js"></script>
+
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        Vue.http.options.emulateJSON = true;
+        new Vue({
+            el: "#demo",
+            data: {
+                id: "",
+                userList: [],
+                name: "",
+                age: "",
+                tel: "",
+                address: ""
+            },
+            methods: {
+                addUser: function () {
+                    var info = {
+                        name: this.name,
+                        age: this.age,
+                        tel: this.tel,
+                        address: this.address
+                    };
+                    this.$http.post("/user/add", info).then(function (response) {
+                        var data = response.data;
+                        if (data.code == 200) {
+                            alert("用户新增成功!");
+                            this.load_list();
+                        } else {
+                            alert("数据异常,无法新增!");
+                        }
+                    }, function (response) {
+                        alert("数据异常,无法新增!");
+                    });
+                },
+                delUser: function (item) {
+                    this.$http.post("/user/delete", {id: item.id}).then(function (response) {
+                        var data = response.data;
+                        if (data.code == 200) {
+                            this.load_list();
+                        } else {
+                            alert("数据异常,无法删除!");
+                        }
+
+                    }, function (response) {
+                        alert("数据异常,无法获取列表!");
+                    });
+                },
+                changeUser: function (item) {
+                    for (var key in item) {
+                        if (this[key] != undefined) {
+                            this[key] = item[key];
+                        }
+                    }
+                },
+                changeBtn: function () {
+                    var info = {
+                        id: this.id,
+                        name: this.name,
+                        age: this.age,
+                        tel: this.tel,
+                        address: this.address
+                    };
+                    this.$http.post("/user/change", info).then(function (response) {
+                        var data = response.data;
+                        if (data.code == 200) {
+                            alert("用户修改成功!");
+                            this.load_list();
+                        } else {
+                            alert("数据异常,无法新增!");
+                        }
+                    }, function (response) {
+                        alert("数据异常,无法新增!");
+                    });
+                },
+                load_list: function () {
+                    this.$http.get("/user/list").then(function (response) {
+                        var data = response.data;
+                        this.userList = data;
+                    }, function (response) {
+                        alert("数据异常,无法获取列表!");
+                    });
+                }
+            },
+            ready: function () {
+                this.load_list();
+            }
+        });
+    });
+</script>
+</body>
+</html>
