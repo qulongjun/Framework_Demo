@@ -41,6 +41,8 @@ public class UserController extends Controller {
             String tel = getPara("tel");
             String address = getPara("address");
 
+
+
             User user = new User();
             Boolean result = user.set("name", name).set("age", age).set("tel", tel).set("address", address).save();
 
