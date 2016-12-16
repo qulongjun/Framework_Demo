@@ -32,5 +32,5 @@
 - 数据库：数据库采用Mysql作为主数据库，若涉及缓存，则采用Redis作为缓存数据库选择。
 
 ##联系作者
-:fa-user: 瞿龙俊
-:fa-send: qulongjun12@163.com
+瞿龙俊
+qulongjun12@163.com
